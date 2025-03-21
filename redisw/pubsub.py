@@ -19,6 +19,12 @@ class AsyncRedisPubSub:
     def __init__(self, redis: ARedis):
         self.redis = redis
 
+    async def publish(self, topic: str, value: str | dict) -> None:
+        if isinstance(value, dict):
+            value = json.dumps(value)
+
+        await self.redis.publish(topic, value)
+
     async def subscribe(self, topic, callback):
         pubsub = self.redis.pubsub()
         await pubsub.subscribe(topic)
